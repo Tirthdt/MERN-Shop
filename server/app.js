@@ -11,6 +11,7 @@ dotenv.config();
 
 const app = express();
 
+
 connDb();
 
 app.use(express.json());

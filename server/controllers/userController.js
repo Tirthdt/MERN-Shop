@@ -1,6 +1,74 @@
 import User from "../models/User.js";
+import expressAsyncHandler from "express-async-handler";
+import { generateToken } from "../utils/generateToken.js";
 
-export const authUser = async (req, res) => {
-    console.log(req.body);
-    res.status(200).send("hello");
-}
+export const authUser = expressAsyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (user) {
+        const isPasswordMatched = await user.matchPasswords(password);
+        if (isPasswordMatched) {
+            return res.status(200).send({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                isAdmin: user.isAdmin,
+                token: generateToken(user._id)
+            });
+        }
+        else {
+            res.status(401);
+            throw new Error("Invalid Password");
+        }
+    }
+    res.status(404);
+    throw new Error("User Not found");
+})
+
+export const getProfile = expressAsyncHandler(async (req, res, next) => {
+    try {
+        const user = req.user;
+        console.log("user", user);
+        if (user) {
+            return res.status(200).send({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                isAdmin: user.isAdmin,
+            });
+        }
+        else {
+            return res.status(401).send({ "message": "Not a valid user" });
+        }
+    } catch (error) {
+        res.status(500);
+        throw new Error("Something went wrong");
+    }
+});
+
+export const registerUser = expressAsyncHandler(async (req, res) => {
+    const { name, email, password } = req.body;
+
+    const userExists = await User.findOne({ email });
+    if (!userExists) {
+        const user = await User.create({ name, email, password });
+        if (user) {
+            res.status(201).json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                isAdmin: user.isAdmin,
+                token: generateToken(user._id)
+            });
+        }
+        else {
+            res.status(400);
+            throw new Error("Invalid User Data");
+        }
+    }
+    else {
+        res.status(400);
+        throw new Error("User Already Exists");
+    }
+});
