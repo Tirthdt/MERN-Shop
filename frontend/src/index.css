@@ -1,14 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap");
+
+body {
+  font-family: "Lato", sans-serif;
+}
+
 main {
-    min-height: 81vh;
+  min-height: 81vh;
 }
 
 footer {
-    width: 100%;
-    background-color: #212529;
-    color: #fff;
+  width: 100%;
+  background-color: #212529;
+  color: #fff;
 }
 
 a {
-    text-decoration: none;
-    color: #111;
+  text-decoration: none;
+  color: #111;
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
 }

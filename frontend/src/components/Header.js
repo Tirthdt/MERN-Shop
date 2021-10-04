@@ -28,23 +28,23 @@ const Header = () => {
             <Nav className="d-flex">
               <LinkContainer to="/cart">
                 <Nav.Link>
-                  <i className="fas fa-shopping-cart"></i> Cart
+                  <i className="fas fa-shopping-cart"></i> CART
                 </Nav.Link>
               </LinkContainer>
               {!userInfo && (
                 <LinkContainer to="/login">
                   <Nav.Link>
-                    <i className="fas fa-user"></i> Sign In
+                    <i className="fas fa-user"></i> SIGN IN
                   </Nav.Link>
                 </LinkContainer>
               )}
               {userInfo && (
                 <NavDropdown title={userInfo.name} id="username">
                   <LinkContainer to="/profile">
-                    <NavDropdown.Item>Profile</NavDropdown.Item>
+                    <NavDropdown.Item>PROFILE</NavDropdown.Item>
                   </LinkContainer>
                   <NavDropdown.Item onClick={logoutHandler}>
-                    Logout
+                    LOGOUT
                   </NavDropdown.Item>
                 </NavDropdown>
               )}
