@@ -12,6 +12,7 @@ import {
   USER_UPDATE_SUCCESS,
   USER_UPDATE_RESET,
 } from "../actionTypes/authActions";
+import { CART_SAVE_SHIPPING_ADDRESS } from "../actionTypes/cartActions";
 import axios from "axios";
 
 export const login = (email, password) => async (dispatch) => {
@@ -134,4 +135,13 @@ export const updateUserDetails = (user) => async (dispatch, getState) => {
           : error.message,
     });
   }
+};
+
+export const saveShippingAddress = (data) => (dispatch) => {
+  dispatch({
+    type: CART_SAVE_SHIPPING_ADDRESS,
+    payload: data,
+  });
+
+  localStorage.setItem("shippingAddress", JSON.stringify(data));
 };
