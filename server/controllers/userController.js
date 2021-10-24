@@ -96,3 +96,57 @@ export const registerUser = expressAsyncHandler(async (req, res) => {
     throw new Error("User Already Exists");
   }
 });
+
+export const getUsers = expressAsyncHandler(async (req, res, next) => {
+  const users = await User.find({});
+  res.json(users);
+});
+
+export const getUserById = expressAsyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id).select("-password");
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
+export const updateUser = expressAsyncHandler(async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (user) {
+      user.email = req.body.email || user.email;
+      user.name = req.body.name || user.name;
+      user.isAdmin = req.body.isAdmin;
+
+      const updatedUser = await user.save();
+
+      return res.send({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        isAdmin: updatedUser.isAdmin,
+      });
+    } else {
+      return res.status(401).send({ message: "Not a valid user" });
+    }
+  } catch (error) {
+    res.status(500);
+    throw new Error("Something went wrong");
+  }
+});
+
+export const deleteUser = expressAsyncHandler(async (req, res, next) => {
+  const userId = req.params.id;
+  const user = await User.findById(userId);
+
+  if (user) {
+    await user.remove();
+    res.json({ message: "User deleted" });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});

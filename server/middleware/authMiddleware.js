@@ -29,3 +29,12 @@ export const protect = expressAsyncHandler(async (req, res, next) => {
     throw new Error("Not authorized");
   }
 });
+
+export const admin = (req, res, next) => {
+  if (req.user && req.user.isAdmin) {
+    next();
+  } else {
+    res.status(404);
+    throw new Error("Not Authorized as an admin");
+  }
+};

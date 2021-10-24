@@ -1,7 +1,14 @@
 import {
+  GET_MY_ORDERS_ERROR,
+  GET_MY_ORDERS_REQUEST,
+  GET_MY_ORDERS_SUCCESS,
+  GET_MY_ORDERS_RESET,
   GET_ORDER_ERROR,
   GET_ORDER_REQUEST,
   GET_ORDER_SUCCESS,
+  MARK_ORDER_PAID_ERROR,
+  MARK_ORDER_PAID_REQUEST,
+  MARK_ORDER_PAID_SUCCESS,
   ORDER_PAY_ERROR,
   ORDER_PAY_REQUEST,
   ORDER_PAY_RESET,
@@ -54,6 +61,34 @@ export const orderPayReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
     case ORDER_PAY_RESET:
       return {};
+    default:
+      return state;
+  }
+};
+
+export const markOrderPaidReducer = (state = {}, action) => {
+  switch (action.type) {
+    case MARK_ORDER_PAID_REQUEST:
+      return { loading: true };
+    case MARK_ORDER_PAID_SUCCESS:
+      return { loading: false, success: true };
+    case MARK_ORDER_PAID_ERROR:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const myOrdersList = (state = { orders: [] }, action) => {
+  switch (action.type) {
+    case GET_MY_ORDERS_REQUEST:
+      return { loading: true };
+    case GET_MY_ORDERS_SUCCESS:
+      return { loading: false, orders: action.payload };
+    case GET_MY_ORDERS_ERROR:
+      return { loading: false, error: action.payload };
+    case GET_MY_ORDERS_RESET:
+      return { orders: [] };
     default:
       return state;
   }

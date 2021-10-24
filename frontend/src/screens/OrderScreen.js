@@ -1,22 +1,96 @@
-import React, { useEffect } from "react";
-import { Row, Col, Card, Image, ListGroup, Alert } from "react-bootstrap";
+import React, { useCallback, useEffect } from "react";
+import {
+  Row,
+  Col,
+  Card,
+  Image,
+  ListGroup,
+  Alert,
+  Button,
+} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loading from "../components/Loading";
-import { getOrderDetail } from "../actions/orderActions";
-
-//http://localhost:3000/orders/61619115c9b8591094ad58aa
+import { getOrderDetail, markOrderPaid } from "../actions/orderActions";
+import { createPaymentOrder, verifyPayment } from "../actions/paymentActions";
 
 const OrderScreen = ({ match }) => {
   const id = match.params.id;
   const dispatch = useDispatch();
+
   const orderDetails = useSelector((state) => state.orderDetails);
+  const paymentCreationDetails = useSelector((state) => state.paymentInfo);
   const { order, loading, error } = orderDetails;
+  const { success: paymentCreationSuccess, order_id } = paymentCreationDetails;
+  const { verified } = useSelector((state) => state.paymentVerification);
+
+  function loadScript(src) {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  const displayRazorPay = useCallback(async () => {
+    const res = await loadScript(
+      "https://checkout.razorpay.com/v1/checkout.js"
+    );
+    if (!res) {
+      console.log("RazorPay sdk failed");
+      return;
+    }
+
+    const options = {
+      key: "rzp_test_4FjJowHKlQAZkZ",
+      amount: Math.round(order.totalPrice),
+      currency: "INR",
+      name: "SHOPIFY",
+      description: `ORDER RECEIPT ${id}`,
+      order_id,
+      handler: async function (response) {
+        console.log(response);
+        const data = {
+          orderCreationId: order_id,
+          razorpayPaymentId: response.razorpay_payment_id,
+          razorpayOrderId: response.razorpay_order_id,
+          razorpaySignature: response.razorpay_signature,
+        };
+        dispatch(verifyPayment(data));
+      },
+      prefill: {
+        name: order.user.name,
+        email: order.user.email,
+      },
+      theme: {
+        color: "#111",
+      },
+    };
+
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
+  }, [id, order, order_id, dispatch]);
 
   useEffect(() => {
-    if (!order || order._id !== id) {
+    if (!order || order?._id !== id) {
       dispatch(getOrderDetail(id));
     }
-  }, [order, id, dispatch]);
+    if (verified && !order.isPaid) {
+      dispatch(markOrderPaid(order));
+    }
+    if (paymentCreationSuccess && !verified) {
+      displayRazorPay();
+    }
+  }, [order, id, dispatch, paymentCreationSuccess, displayRazorPay, verified]);
+
+  const makePayment = () => {
+    dispatch(createPaymentOrder(id, order.totalPrice));
+  };
 
   return loading ? (
     <Loading></Loading>
@@ -54,7 +128,7 @@ const OrderScreen = ({ match }) => {
                 {order.paymentMethod}
               </p>
               {order.isPaid ? (
-                <Alert variant="success">Paid on {order.paidAt}</Alert>
+                <Alert variant="success">Paid on {order.payedAt}</Alert>
               ) : (
                 <Alert variant="danger">Not Paid</Alert>
               )}
@@ -77,10 +151,10 @@ const OrderScreen = ({ match }) => {
                           />
                         </Col>
                         <Col md={3}>{orderItem.name}</Col>
-                        <Col md={2}>${orderItem.price}</Col>
+                        <Col md={2}>Rs.{orderItem.price}</Col>
                         <Col md={1}>X</Col>
                         <Col md={2}>{orderItem.qty}</Col>
-                        <Col md={2}>${orderItem.qty * orderItem.price}</Col>
+                        <Col md={2}>Rs.{orderItem.qty * orderItem.price}</Col>
                       </Row>
                     );
                   })}
@@ -99,7 +173,7 @@ const OrderScreen = ({ match }) => {
                 <Row>
                   <Col>Price</Col>
                   <Col>
-                    $
+                    Rs.
                     {order.orderItems.reduce(
                       (acc, item) => acc + item.price * item.qty,
                       0
@@ -110,21 +184,32 @@ const OrderScreen = ({ match }) => {
               <ListGroup.Item>
                 <Row>
                   <Col>Shipping</Col>
-                  <Col>${order.shippingPrice}</Col>
+                  <Col>Rs.{order.shippingPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Tax</Col>
-                  <Col>${order.taxPrice}</Col>
+                  <Col>Rs.{order.taxPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Total</Col>
-                  <Col>${order.totalPrice}</Col>
+                  <Col>Rs.{order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
+              {!order.isPaid && (
+                <ListGroup.Item>
+                  <Button
+                    variant="dark"
+                    onClick={makePayment}
+                    className="btn-block"
+                  >
+                    Make Payment
+                  </Button>
+                </ListGroup.Item>
+              )}
             </ListGroup>
           </Card>
         </Col>

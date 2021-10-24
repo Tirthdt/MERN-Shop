@@ -119,7 +119,7 @@ const Placeorder = ({ history }) => {
                           />
                         </Col>
                         <Col md={3}>{cartItem.name}</Col>
-                        <Col md={2}>${cartItem.price}</Col>
+                        <Col md={2}>Rs.{cartItem.price}</Col>
                         <Col md={1}>X</Col>
                         <Col md={2}>{cartItem.qty}</Col>
                         <Col md={2}>{cartItem.qty * cartItem.price}</Col>
@@ -140,25 +140,25 @@ const Placeorder = ({ history }) => {
               <ListGroup.Item>
                 <Row>
                   <Col>Price</Col>
-                  <Col>${cart.itemPrice}</Col>
+                  <Col>Rs.{cart.itemPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Shipping</Col>
-                  <Col>${cart.shippingPrice}</Col>
+                  <Col>Rs.{cart.shippingPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Tax</Col>
-                  <Col>${cart.taxPrice}</Col>
+                  <Col>Rs.{cart.taxPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Total</Col>
-                  <Col>${cart.totalPrice}</Col>
+                  <Col>Rs.{cart.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
