@@ -18,6 +18,13 @@ import {
   USER_DELETE_REQUEST,
   USER_DELETE_FAIL,
   USER_DELETE_SUCCESS,
+  GET_USER_BY_ID_FAIL,
+  GET_USER_BY_ID_REQUEST,
+  GET_USER_BY_ID_SUCCESS,
+  UPDATE_USER_BY_ID_FAIL,
+  UPDATE_USER_BY_ID_REQUEST,
+  UPDATE_USER_BY_ID_SUCCESS,
+  UPDATE_USER_BY_ID_RESET,
 } from "../actionTypes/authActions";
 
 import { CART_SAVE_SHIPPING_ADDRESS } from "../actionTypes/cartActions";
@@ -195,6 +202,66 @@ export const deleteUser = (id) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: USER_DELETE_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const getUserByID = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: GET_USER_BY_ID_REQUEST });
+    const {
+      user: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get("/api/user/" + id, config);
+
+    dispatch({ type: GET_USER_BY_ID_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: GET_USER_BY_ID_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const updateUserByID = (userData) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: UPDATE_USER_BY_ID_REQUEST });
+    const {
+      user: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.put(
+      `/api/user/${userData.id}`,
+      userData,
+      config
+    );
+
+    dispatch({ type: UPDATE_USER_BY_ID_SUCCESS, payload: data });
+    dispatch({ type: UPDATE_USER_BY_ID_RESET });
+  } catch (error) {
+    dispatch({
+      type: UPDATE_USER_BY_ID_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
