@@ -14,6 +14,7 @@ import {
   USER_UPDATE_SUCCESS,
   USER_UPDATE_FAIL,
   USER_UPDATE_RESET,
+  USER_REGISTER_RESET,
 } from "../actionTypes/authActions";
 
 export const authReducer = (state = {}, action) => {
@@ -40,6 +41,8 @@ export const registerUserReducer = (state = {}, action) => {
       return { loading: false, userInfo: action.payload };
     case USER_REGISTER_FAIL:
       return { loading: false, error: action.payload };
+    case USER_REGISTER_RESET:
+      return { user: {} };
     default:
       return state;
   }

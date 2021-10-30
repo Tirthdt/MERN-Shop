@@ -10,15 +10,24 @@ import {
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loading from "../components/Loading";
-import { getOrderDetail, markOrderPaid } from "../actions/orderActions";
+import {
+  getOrderDetail,
+  markOrderPaid,
+  markOrderDelivered,
+} from "../actions/orderActions";
 import { createPaymentOrder, verifyPayment } from "../actions/paymentActions";
+import { MARK_ORDER_DELIVERED_RESET } from "../actionTypes/orderActions";
 
-const OrderScreen = ({ match }) => {
+const OrderScreen = ({ match, history }) => {
   const id = match.params.id;
   const dispatch = useDispatch();
 
   const orderDetails = useSelector((state) => state.orderDetails);
   const paymentCreationDetails = useSelector((state) => state.paymentInfo);
+  const { userInfo } = useSelector((state) => state.user);
+  const { success: orderDeliveredSuccess } = useSelector(
+    (state) => state.orderDelivered
+  );
   const { order, loading, error } = orderDetails;
   const { success: paymentCreationSuccess, order_id } = paymentCreationDetails;
   const { verified } = useSelector((state) => state.paymentVerification);
@@ -77,8 +86,16 @@ const OrderScreen = ({ match }) => {
   }, [id, order, order_id, dispatch]);
 
   useEffect(() => {
+    if (typeof userInfo === "undefined") {
+      history.push("/login");
+      return;
+    }
     if (!order || order?._id !== id) {
       dispatch(getOrderDetail(id));
+    }
+    if (orderDeliveredSuccess) {
+      dispatch(getOrderDetail(id));
+      dispatch({ type: MARK_ORDER_DELIVERED_RESET });
     }
     if (verified && !order.isPaid) {
       dispatch(markOrderPaid(order));
@@ -86,10 +103,25 @@ const OrderScreen = ({ match }) => {
     if (paymentCreationSuccess && !verified) {
       displayRazorPay();
     }
-  }, [order, id, dispatch, paymentCreationSuccess, displayRazorPay, verified]);
+  }, [
+    order,
+    id,
+    dispatch,
+    paymentCreationSuccess,
+    displayRazorPay,
+    verified,
+    orderDeliveredSuccess,
+    history,
+    userInfo,
+  ]);
 
   const makePayment = () => {
     dispatch(createPaymentOrder(id, order.totalPrice));
+  };
+
+  const markOrderDeliverd = () => {
+    console.log("Mark order delivered");
+    dispatch(markOrderDelivered(id));
   };
 
   return loading ? (
@@ -207,6 +239,17 @@ const OrderScreen = ({ match }) => {
                     className="btn-block"
                   >
                     Make Payment
+                  </Button>
+                </ListGroup.Item>
+              )}
+              {userInfo && userInfo.isAdmin && !order.isDelivered && (
+                <ListGroup.Item>
+                  <Button
+                    variant="success"
+                    onClick={markOrderDeliverd}
+                    className="w-100"
+                  >
+                    Mark Delivered
                   </Button>
                 </ListGroup.Item>
               )}

@@ -18,7 +18,11 @@ const UserListScreen = ({ history }) => {
   const { message } = userDelete;
 
   useEffect(() => {
-    if ((userInfo && userInfo.isAdmin) || message) {
+    if (typeof userInfo === "undefined") {
+      history.push("/");
+      return;
+    }
+    if (userInfo.isAdmin || message) {
       dispatch(getUsers());
     } else {
       history.replace("/");
@@ -26,7 +30,6 @@ const UserListScreen = ({ history }) => {
   }, [dispatch, history, userInfo, message]);
 
   const deleteHandler = (id) => {
-    console.log(id);
     dispatch(deleteUser(id));
   };
 

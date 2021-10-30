@@ -1,71 +1,79 @@
 import mongoose from "mongoose";
 
-
-const ReviewSchema = mongoose.Schema({
+const ReviewSchema = mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     rating: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
     },
     comment: {
-        type: String,
-        required: true
-    }
-}, { timestamps: true });
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-const ProductSchema = mongoose.Schema({
+const ProductSchema = mongoose.Schema(
+  {
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'User'
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
     },
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     image: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     brand: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     reviews: [ReviewSchema],
     category: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     description: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     rating: {
-        type: Number,
-        required: true,
-        default: 0
+      type: Number,
+      required: true,
+      default: 0,
     },
     numReviews: {
-        type: Number,
-        required: true,
-        default: 0
+      type: Number,
+      required: true,
+      default: 0,
     },
     price: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     countInStock: {
-        type: Number,
-        required: true,
-        default: 0
-    }
-}, { timestamps: true });
+      type: Number,
+      required: true,
+      default: 0,
+    },
+  },
+  { timestamps: true }
+);
 
-const Product = mongoose.model('Product', ProductSchema);
+const Product = mongoose.model("Product", ProductSchema);
 
 export default Product;
-
-

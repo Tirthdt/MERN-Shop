@@ -16,6 +16,14 @@ import {
   PLACE_ORDER_ERROR,
   PLACE_ORDER_REQUEST,
   PLACE_ORDER_SUCCESS,
+  GET_ALL_ORDERS_REQUEST,
+  GET_ALL_ORDERS_SUCCESS,
+  GET_ALL_ORDERS_ERROR,
+  GET_ALL_ORDERS_RESET,
+  MARK_ORDER_DELIVERED_REQUEST,
+  MARK_ORDER_DELIVERED_SUCCESS,
+  MARK_ORDER_DELIVERED_ERROR,
+  MARK_ORDER_DELIVERED_RESET,
 } from "../actionTypes/orderActions";
 
 export const orderCreateReducer = (state = {}, action) => {
@@ -89,6 +97,36 @@ export const myOrdersList = (state = { orders: [] }, action) => {
       return { loading: false, error: action.payload };
     case GET_MY_ORDERS_RESET:
       return { orders: [] };
+    default:
+      return state;
+  }
+};
+
+export const getAllOrders = (state = { orders: [] }, action) => {
+  switch (action.type) {
+    case GET_ALL_ORDERS_REQUEST:
+      return { loading: true };
+    case GET_ALL_ORDERS_SUCCESS:
+      return { loading: false, orders: action.payload };
+    case GET_ALL_ORDERS_ERROR:
+      return { loading: false, error: action.payload };
+    case GET_ALL_ORDERS_RESET:
+      return { orders: [] };
+    default:
+      return state;
+  }
+};
+
+export const markOrderDeliveredReducer = (state = {}, action) => {
+  switch (action.type) {
+    case MARK_ORDER_DELIVERED_REQUEST:
+      return { loading: true };
+    case MARK_ORDER_DELIVERED_SUCCESS:
+      return { loading: false, success: true };
+    case MARK_ORDER_DELIVERED_ERROR:
+      return { loading: false, error: action.payload };
+    case MARK_ORDER_DELIVERED_RESET:
+      return {};
     default:
       return state;
   }

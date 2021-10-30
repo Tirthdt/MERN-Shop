@@ -25,6 +25,7 @@ import {
   UPDATE_USER_BY_ID_REQUEST,
   UPDATE_USER_BY_ID_SUCCESS,
   UPDATE_USER_BY_ID_RESET,
+  USER_REGISTER_RESET,
 } from "../actionTypes/authActions";
 
 import { CART_SAVE_SHIPPING_ADDRESS } from "../actionTypes/cartActions";
@@ -81,6 +82,7 @@ export const register = (name, email, password) => async (dispatch) => {
       config
     );
     dispatch({ type: USER_REGISTER_SUCCESS, payload: data });
+    dispatch({ type: USER_REGISTER_RESET });
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
 
     localStorage.setItem("userInfo", JSON.stringify(data));

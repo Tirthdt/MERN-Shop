@@ -17,6 +17,7 @@ export const protect = expressAsyncHandler(async (req, res, next) => {
       );
       const { id } = token;
       req.user = await User.findById(id).select("-password");
+
       return next();
     } catch (err) {
       console.log(`Token validation failed`.red.inverse);

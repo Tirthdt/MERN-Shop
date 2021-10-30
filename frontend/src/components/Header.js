@@ -1,8 +1,10 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Route } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 import { logout } from "../actions/authActions";
+import SearchBox from "./SearchBox";
 
 const Header = () => {
   const authSelector = useSelector((state) => state.user);
@@ -24,6 +26,8 @@ const Header = () => {
           </LinkContainer>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
+            <Route render={({ history }) => <SearchBox history={history} />} />
+
             <Nav className="me-auto"></Nav>
             <Nav className="d-flex">
               <LinkContainer to="/cart">
@@ -48,8 +52,11 @@ const Header = () => {
                       <LinkContainer to="/users">
                         <NavDropdown.Item>USERS</NavDropdown.Item>
                       </LinkContainer>
-                      <LinkContainer to="/orders">
+                      <LinkContainer to="/admin/orders">
                         <NavDropdown.Item>ORDERS</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to="/products">
+                        <NavDropdown.Item>PRODUCTS</NavDropdown.Item>
                       </LinkContainer>
                     </>
                   )}

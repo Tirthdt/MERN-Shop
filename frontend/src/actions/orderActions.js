@@ -16,6 +16,12 @@ import {
   GET_MY_ORDERS_REQUEST,
   GET_MY_ORDERS_SUCCESS,
   GET_MY_ORDERS_ERROR,
+  GET_ALL_ORDERS_ERROR,
+  GET_ALL_ORDERS_REQUEST,
+  GET_ALL_ORDERS_SUCCESS,
+  MARK_ORDER_DELIVERED_ERROR,
+  MARK_ORDER_DELIVERED_SUCCESS,
+  MARK_ORDER_DELIVERED_REQUEST,
 } from "../actionTypes/orderActions";
 
 export const createOrder = (order) => async (dispatch, getState) => {
@@ -168,6 +174,60 @@ export const markOrderPaid = (orderData) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: MARK_ORDER_PAID_ERROR,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const markOrderDelivered = (orderId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: MARK_ORDER_DELIVERED_REQUEST });
+    const {
+      user: { userInfo },
+    } = getState();
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.put(
+      `/api/orders/${orderId}/delivered`,
+      {},
+      config
+    );
+
+    dispatch({ type: MARK_ORDER_DELIVERED_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: MARK_ORDER_DELIVERED_ERROR,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const getAllOrders = () => async (dispatch, getState) => {
+  try {
+    const {
+      user: { userInfo },
+    } = getState();
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+    dispatch({ type: GET_ALL_ORDERS_REQUEST });
+    const { data } = await axios.get("/api/orders", config);
+    dispatch({ type: GET_ALL_ORDERS_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: GET_ALL_ORDERS_ERROR,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
