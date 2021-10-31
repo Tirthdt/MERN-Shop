@@ -21,6 +21,8 @@ const ProfileScreen = ({ location, history }) => {
   const authSelector = useSelector((state) => state.user);
   const { userInfo } = authSelector;
 
+  console.log(userInfo, user);
+
   const userUpdateProfileSelector = useSelector(
     (state) => state.userUpdateProfile
   );

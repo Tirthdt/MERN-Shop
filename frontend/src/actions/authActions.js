@@ -168,9 +168,11 @@ export const updateUserDetails = (user) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.put(`/api/user/profile`, { ...user }, config);
+    console.log("Update data " + data);
     dispatch({ type: USER_UPDATE_SUCCESS, payload: data });
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
-    localStorage.setItem("userInfo", data);
+    localStorage.setItem("userInfo", JSON.stringify(data));
+    dispatch({ type: USER_DETAILS_SUCCESS, payload: data });
     setTimeout(() => {
       dispatch({ type: USER_UPDATE_RESET, payload: data });
     }, 2000);
