@@ -26,6 +26,9 @@ import {
   UPDATE_USER_BY_ID_SUCCESS,
   UPDATE_USER_BY_ID_RESET,
   USER_REGISTER_RESET,
+  USER_RESET_PASSWORD_REQUEST,
+  USER_RESET_PASSWORD_FAIL,
+  USER_RESET_PASSWORD_SUCCESS,
 } from "../actionTypes/authActions";
 
 import { CART_SAVE_SHIPPING_ADDRESS } from "../actionTypes/cartActions";
@@ -266,6 +269,22 @@ export const updateUserByID = (userData) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: UPDATE_USER_BY_ID_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const resetUserPassword = (data) => async (dispatch) => {
+  try {
+    dispatch({ type: USER_RESET_PASSWORD_REQUEST });
+    const res = await axios.put("/api/user/resetPassword", data);
+    dispatch({ type: USER_RESET_PASSWORD_SUCCESS, payload: res });
+  } catch (error) {
+    dispatch({
+      type: USER_RESET_PASSWORD_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

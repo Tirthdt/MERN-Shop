@@ -138,6 +138,23 @@ export const updateUser = expressAsyncHandler(async (req, res, next) => {
   }
 });
 
+export const resetPassword = expressAsyncHandler(async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+
+    if (user) {
+      user.password = req.body.password;
+      await user.save();
+      return res.status(201).send({ success: true });
+    } else {
+      return res.status(404).send({ message: "User with email not found." });
+    }
+  } catch (error) {
+    res.status(500);
+    throw new Error("Something went wrong");
+  }
+});
+
 export const deleteUser = expressAsyncHandler(async (req, res, next) => {
   const userId = req.params.id;
   const user = await User.findById(userId);

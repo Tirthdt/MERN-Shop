@@ -56,17 +56,22 @@ const LoginScreen = ({ location, history }) => {
           ></Form.Control>
         </Form.Group>
         <Button className="mt-3 btn-block" type="submit" variant="dark">
-          Sign In
+          {loading ? <Loading /> : "Sign In"}
         </Button>
       </Form>
       <Row className="py-3">
         <Col>
-          New Customer?{" "}
+          New Customer?
           <Link to={redirect ? `/register?redirect=${redirect}` : "/register"}>
-            {loading ? <Loading></Loading> : "Register"}
+            Register
           </Link>
         </Col>
+        <Col>
+          Forgot Password?
+          <Link to="/forgotPassword">Reset Here.</Link>
+        </Col>
       </Row>
+      <Row className="py-3"></Row>
     </FormContainer>
   );
 };

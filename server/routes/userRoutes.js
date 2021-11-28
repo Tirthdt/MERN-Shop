@@ -9,12 +9,14 @@ import {
   deleteUser,
   getUserById,
   updateUser,
+  resetPassword,
 } from "../controllers/userController.js";
 
 const router = express.Router();
 
 router.post("/login", authUser);
 router.route("/").get(protect, admin, getUsers);
+router.route("/resetPassword").put(resetPassword);
 router.route("/profile").get(protect, getProfile);
 router.route("/profile").put(protect, updateProfile);
 router.route("/:id").get(protect, admin, getUserById);

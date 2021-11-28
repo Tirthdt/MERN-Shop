@@ -16,6 +16,7 @@ import {
   registerUserReducer,
   userDetailsReducer,
   userUpdateReducer,
+  resetPasswordReducer,
 } from "./reducers/authReducers";
 import {
   orderCreateReducer,
@@ -50,6 +51,7 @@ const reducer = combineReducers({
   registerUser: registerUserReducer,
   userDetails: userDetailsReducer,
   userUpdateProfile: userUpdateReducer,
+  resetPassword: resetPasswordReducer,
   orderCreate: orderCreateReducer,
   orderDetails: getOrderReducer,
   orderPaid: markOrderPaidReducer,
